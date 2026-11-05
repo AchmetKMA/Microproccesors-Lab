@@ -1,0 +1,14 @@
+void activate_ventilation_system() {
+	// Enable split mode
+	TCA0.SPLIT.CTRLD = TCA_SPLIT_SPLITM_bm;
+	// Activate LED1 indicating ventilation system is active
+	PORTD.OUTSET = PIN1_bm;
+	// Configure PWM for LED2 (PORTD pin 2)
+	TCA0.SPLIT.CTRLA = TCA_SPLIT_SPLITM_bm; // Enable TCA
+	TCA0.SPLIT.CTRLB = TCA_SPLIT_HCMP0EN_bm;; // Enable compare mode
+	TCA0.SPLIT.HCMP0 = 0x3FF; // Set compare value for 50% duty cycle
+    TCA0.SPLIT.CTRLB |=TCA_SINGLE_WGMODE_SINGLESLOPE_gc = (0x03<<0),  /* Single Slope PWM */; // Set PWM mode
+	TCA0.SPLIT.CTRLA |= TCA_SPLIT_SPLITM_bm; // Enable PWM output
+	cli();
+	TCA0_hardReset(); //after the ventilation system gets activated the system gets to the initial state
+}

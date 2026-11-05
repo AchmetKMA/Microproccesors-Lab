@@ -1,0 +1,75 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+#define T1 500    // Time interval for regular traffic light cycle (in milliseconds)
+#define T2 3000   // Time interval for tram interruption (in milliseconds)
+#define T3 5000   // Time interval for preventing immediate pedestrian button press (in milliseconds)
+
+volatile uint8_t pedestrianButtonPressed = 0;
+
+void initPorts() {
+    // Configure PORTD for traffic lights and tram simulation
+    PORTD.DIRSET = PIN0_bm | PIN1_bm | PIN2_bm; // Set PIN0, PIN1, and PIN2 as outputs
+
+    // Configure PORTF PIN5 for pedestrian button input with pull-up resistor
+    PORTF.DIRCLR = PIN5_bm; // Set PIN5 as input
+    PORTF.PIN5CTRL = PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc; // Enable pull-up and interrupt on falling edge
+}
+
+
+void initTimer() {
+    // Configure TCA0 for timer/counter split mode
+    TCA0.SPLIT.CTRLA = TCA_SPLIT_ENABLE_bm; // Enable TCA0 in split mode
+    TCA0.SPLIT.CTRLB = TCA_SPLIT_LCMP0EN_bm | TCA_SPLIT_HCMP0EN_bm; // Enable low and high compare 0
+
+    // Set T1 interval (for regular traffic light cycle) in milliseconds
+    TCA0.SPLIT.LCMP0 = (F_CPU / 1024 * T1) / 1000 - 1;
+
+    // Set initial values for T2 and T3 intervals
+    TCA0.SPLIT.HCMP0 = (F_CPU / 1024 * T2) / 1000 - 1; // T2 interval
+    TCA0.SPLIT.HCMP1 = (F_CPU / 1024 * T3) / 1000 - 1; // T3 interval
+
+    // Enable interrupts for TCA0
+    TCA0.SPLIT.INTCTRL = TCA_SPLIT_LUNF_bm | TCA_SPLIT_HCMP0EN_bm; // Enable Low-level Underflow and High-level Compare Match 0 interrupts
+}
+
+
+int main() {
+    initPorts();
+    initTimer();
+    sei(); // Enable global interrupts
+
+    while (1) {
+        // Main program logic goes here
+        if (pedestrianButtonPressed) {
+            // Handle pedestrian button press
+            pedestrianButtonPressed = 0; // Reset the flag
+
+            // Implement the required behavior when the pedestrian button is pressed
+            // (e.g., turn on pedestrian green light and turn off car green light)
+            // ...
+
+            // Note: Ensure that active time slots are maintained until their completion
+        }
+    }
+
+    return 0;
+}
+
+ISR(PORTF_PORT_vect) {
+    // Interrupt Service Routine for the pedestrian button press
+    pedestrianButtonPressed = 1; // Set the flag to indicate button press
+}
+
+ISR(TCA0_LUNF_vect) {
+    // Interrupt Service Routine for T1 interval (tram simulation)
+    // Implement the required behavior for T1 interval
+    // ...
+}
+
+ISR(TCA0_SPLIT_HCMP0_vect)
+    // Interrupt Service Routine for T2 interval (tram interruption)
+    // Implement the required behavior for T2 interval
+    // ...
+}
+

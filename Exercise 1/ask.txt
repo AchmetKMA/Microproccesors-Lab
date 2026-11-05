@@ -1,0 +1,41 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+
+
+#define T1 10000   //Tram comes and interrupts normal operation  (in milliseconds)
+#define T2 30000   // Interruption of Tram where RED is for Cars and GREEN for Pedestrians AND in the other case the pedestrian button is pressed where GREEN is for Pedestrians and RED for Cars (in milliseconds)
+#define T3 50000   // Time interval for preventing immediate pedestrian button press (in milliseconds)
+
+int x=0; //logic flag
+
+
+int main() {
+	
+	PORTD.DIR |= 0b00000111; //PIN is output
+	PORTD.OUT= 0b00000100; //LED 2 ON for cars (Regular Mode)
+	
+	PORTF.PIN5CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc; //pullup enable and Interrupt enabled with sense on both edges
+
+	sei(); //enable interrupts
+
+	while (x==0) {
+		
+		
+		
+		PORTD.OUTCLR= 0b00000011; //PIN1_bm //LED 1 is ON (TRAM) //PIN0_bm AND PIN2_bm //LED 0 (pedestrian) is ON and LED 2 is OFF (car)
+		_delay_ms(T2); //Delay for T2=50 ms
+		_delay_ms(T1); //Delay for T1=10 ms because Tram is passing
+		
+	}
+	
+	
+	PORTD.OUT |= 0b00000100; //LED 2 ON for cars (Regular Mode)
+	cli(); //disable interrupts
+}
+
+ISR(PORTD_PORT_vect){
+	int y = PORTD.INTFLAGS; //Procedure to
+	PORTD.INTFLAGS=y; //clear the interrupt flag
+	x=1; //change logic flag to get out of loop
+}

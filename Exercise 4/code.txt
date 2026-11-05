@@ -1,0 +1,147 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+
+int lower_thres = 10;
+int higher_thres = 20;
+int rising_edges = 0;
+
+int x=0;
+
+int main(){
+	PORTD.DIR |= PIN0_bm; //Used for Low humidity and for warning LEDs with LED1, LED2
+	PORTD.DIR |= PIN1_bm; //Used for High Humidity and for warning LEDs LED0, LED2
+	PORTD.DIR |= PIN2_bm; //Used for Ventilation System and for warning LEDs with LED0, LED1
+
+	PORTD.OUT |=PIN0_bm; //PIN0 off
+	PORTD.OUT |=PIN1_bm; //PIN1 off
+	PORTD.OUT |=PIN2_bm; //PIN2 off
+
+
+	PORTF.PIN5CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc; //SW5-> Watering System
+	PORTF.PIN6CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc; //SW6-> Ventilation System
+
+
+	//Humidity ADC
+	ADC0.CTRLA |= ADC_RESSEL_10BIT_gc;//10-bit resolution
+	ADC0.CTRLA |= ADC_FREERUN_bm; //Free-Running mode enabled
+	ADC0.CTRLA |= ADC_ENABLE_bm; //Enable ADC
+	ADC0.MUXPOS |= ADC_MUXPOS_AIN7_gc;//the bit connecting to the ADC
+	ADC0.DBGCTRL |= ADC_DBGRUN_bm; //Enable Debug Mode 
+
+	//Window Comparator Mode
+	ADC0.WINLT |= lower_thres; //Set min threshold
+	ADC0.WINHT |= higher_thres; //Set max threshold
+	ADC0.INTCTRL |= ADC_WCMP_bm; //Enable Interrupts for WCM
+	ADC0.CTRLE |= 0b00000100; //Interrupt when RESULT < WINLT or RESULT >WINHT
+	sei();
+	ADC0.COMMAND |= ADC_STCONV_bm; //Start Conversion, values saved in the register res
+	while(x==0){
+		;
+	}
+}
+
+
+ISR(ADC0_WCOMP_vect){  //ADC check if is Max OR Min Threshold
+	int intflags = ADC0.INTFLAGS; //clears INTFLAGS
+	ADC0.INTFLAGS = intflags; //clears INTFLAGS
+
+	if(ADC0.RES<10){//an interrupt logo RES<WINLT
+		PORTD.OUTCLR = PIN0_bm; //PIN0 is ON system suggesting for Watering
+	}
+
+	if(ADC0.RES>20){//an interrupt logo RES>WINHT
+		PORTD.OUTCLR = PIN1_bm; //PIN1 is ON system suggesting for Ventilation 
+	}
+	ADC0.CTRLA=0; //Disable ADC0
+}
+
+ISR(PORTF_PORT_vect){  //ISR for SWITCHES
+	cli();
+
+	//Checking what did the ISR
+	if((PORTF.INTFLAGS&0b00100000)==0b00100000){  //if Switch 5 is pressed enable watering system
+		PORTD.OUTCLR = PIN0_bm; //PIN0 is on
+
+		int value = lower_thres - ADC0.RES;
+		TCA0.SINGLE.CNT = 0; //clear counter
+		TCA0.SINGLE.CTRLB = 0; //Normal Mode (TCA_SINGLE_WGMODE_NORMAL_gc σελ 207)
+		TCA0.SINGLE.CMP0 = value; //When reaches this value -> interrupt CLOCK FREQUENCY/1024
+		TCA0.SINGLE.CTRLA = 0x7<<1;//TCA_SINGLE_CLKSEL_DIV1024_gc σελ 224
+		TCA0.SINGLE.CTRLA |=1; //Enable
+		TCA0.SINGLE.INTCTRL = TCA_SINGLE_CMP0_bm; //Interrupt Enable (=0x10)
+		sei(); //enable interrupts
+	}
+
+	if((PORTF.INTFLAGS&0b01000000)==0b01000000){ //if switch 6 is pressed enable ventilation system
+		TCA0.SINGLE.CTRLA=TCA_SINGLE_CLKSEL_DIV1024_gc; //prescaler=1024
+		TCA0.SINGLE.PER = 20; //
+		TCA0.SINGLE.CMP0 = 10; //duty cycle 50%
+		TCA0.SINGLE.CTRLB=TCA_SINGLE_WGMODE_SINGLESLOPE_gc; //select Single_Slope_PWM
+		TCA0.SINGLE.INTCTRL = TCA_SINGLE_OVF_bm; //enable interrupt Overflow
+		TCA0.SINGLE.CTRLA |= TCA_SINGLE_ENABLE_bm; //Enable TCA
+		sei();
+	}
+	int y = PORTF.INTFLAGS; //clears INTFLAGS
+	PORTF.INTFLAGS=y; //clears INTFLAGS
+}
+
+ISR(TCA0_CMP0_vect){  //ISR for timer to compare
+	TCA0.SINGLE.CTRLA = 0; //Disable TCA
+	PORTD.OUT |=PIN0_bm; //PIN0 OFF
+	int intflags = TCA0.SINGLE.INTFLAGS;  //clears INTFLAGS
+	TCA0.SINGLE.INTFLAGS=intflags;  //clears INTFLAGS
+	//ADC Enable Humidity 
+	ADC0.CTRLA |= ADC_RESSEL_10BIT_gc;//10-bit resolution
+	ADC0.CTRLA |= ADC_FREERUN_bm; //Free-Running mode enabled
+	ADC0.CTRLA |= ADC_ENABLE_bm; //Enable ADC
+	ADC0.MUXPOS |= ADC_MUXPOS_AIN7_gc;//the bit connecting to the ADC
+	ADC0.DBGCTRL |= ADC_DBGRUN_bm; //Enable Debug Mode for ADC not stopping
+
+	//Window Comparator Mode
+	ADC0.WINLT |= lower_thres; //Set min threshold
+	ADC0.WINHT |= higher_thres; //Set max threshold
+	ADC0.INTCTRL |= ADC_WCMP_bm; //Enable Interrupts for WCM
+	ADC0.CTRLE |= 0b00000100; //Interrupt when RESULT < WINLT or RESULT >WINHT
+	sei();
+	ADC0.COMMAND |= ADC_STCONV_bm; //Start Conversion, values saved in the register res
+	
+	PORTD.OUT |=PIN0_bm; //PIN0 off
+	PORTD.OUT |=PIN1_bm; //PIN1 off
+	PORTD.OUT |=PIN2_bm; //PIN2 off
+
+}
+
+
+ISR(TCA0_OVF_vect){ //ISR for timer overflow for ventilation
+	rising_edges++;
+	PORTD.OUTCLR = PIN0_bm; //PIN0 is on
+	int intflags = TCA0.SINGLE.INTFLAGS; //clears INTFLAGS
+	TCA0.SINGLE.INTFLAGS = intflags; //clears INTFLAGS
+
+	if(rising_edges==4){ //Disable after 4 rising edges
+		TCA0.SINGLE.CTRLA = 0; //Disable TCA
+		PORTD.OUT |=PIN1_bm; //PIN1 off
+		PORTD.OUT |=PIN2_bm; //PIN2 off
+		rising_edges=0;
+	}
+	//Enable ADC for Humidity
+	ADC0.CTRLA |= ADC_RESSEL_10BIT_gc;//10-bit resolution
+	ADC0.CTRLA |= ADC_FREERUN_bm; //Free-Running mode enabled
+	ADC0.CTRLA |= ADC_ENABLE_bm; //Enable ADC
+	ADC0.MUXPOS |= ADC_MUXPOS_AIN7_gc;//the bit connecting to the ADC
+	ADC0.DBGCTRL |= ADC_DBGRUN_bm; //Enable Debug Mode, the ADC will no stop
+
+	//Window Comparator Mode
+	ADC0.WINLT |= lower_thres; //Set min threshold
+	ADC0.WINHT |= higher_thres; //Set max threshold
+	ADC0.INTCTRL |= ADC_WCMP_bm; //Enable Interrupts for WCM
+	ADC0.CTRLE |= 0b00000100; //Interrupt when RESULT < WINLT or RESULT >WINHT for LED2
+	sei();
+	ADC0.COMMAND |= ADC_STCONV_bm; //Start Conversion, values saved in the register res
+	
+	PORTD.OUT |=PIN0_bm; //PIN0 off
+	PORTD.OUT |=PIN1_bm; //PIN1 off
+	PORTD.OUT |=PIN2_bm; //PIN2 off
+
+}

@@ -1,0 +1,138 @@
+<mxfile host="Electron" modified="2024-03-05T20:35:03.051Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" etag="xLxeoKJ6jnqaH55rDbyS" version="22.1.2" type="device">
+  <diagram name="Σελίδα-1" id="7Ig27oVYu4TAgtQBIq3E">
+    <mxGraphModel dx="1434" dy="844" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="yJUaIPieocp2-gptNvQh-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-71" target="yJUaIPieocp2-gptNvQh-70">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="680" y="250" as="targetPoint" />
+            <mxPoint x="680" y="240" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-70" target="yJUaIPieocp2-gptNvQh-66">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="882.5000000000005" y="359.9999999999998" as="targetPoint" />
+            <mxPoint x="760" y="320" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-70" target="yJUaIPieocp2-gptNvQh-68">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="480" y="360" as="targetPoint" />
+            <mxPoint x="600" y="319.5" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-27" target="yJUaIPieocp2-gptNvQh-30">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="890" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-27" target="yJUaIPieocp2-gptNvQh-36">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1030" y="890" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-27" value="Push Button Again" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="811.25" y="730" width="137.5" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-29" value="&lt;h2&gt;if&lt;/h2&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="720" y="770" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-30" target="yJUaIPieocp2-gptNvQh-34">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="1060" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-30" value="Χρονικό Διάστημα από το Πάτημα Κουμπιού&lt;br&gt;(ΧΔΠΚ)&lt;br&gt;ΧΔΠΚ &amp;lt; Τ3" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;" vertex="1" parent="1">
+          <mxGeometry x="650" y="890" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-34" value="Push Button Cancelled" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e51400;fontColor=#ffffff;strokeColor=#B20000;" vertex="1" parent="1">
+          <mxGeometry x="660" y="1060" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-36" target="yJUaIPieocp2-gptNvQh-39">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1030" y="1050" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-36" value="XΔΠΚ&amp;gt;Τ3" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;" vertex="1" parent="1">
+          <mxGeometry x="960" y="890" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-37" value="&lt;h3&gt;else if&lt;/h3&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="960" y="755" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-39" value="Push Button Accepted" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e51400;fontColor=#ffffff;strokeColor=#B20000;" vertex="1" parent="1">
+          <mxGeometry x="970" y="1060" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-40" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-39" target="yJUaIPieocp2-gptNvQh-66">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="700" y="900" as="sourcePoint" />
+            <mxPoint x="932.5000000000005" y="384.9999999999998" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1190" y="1100" />
+              <mxPoint x="1190" y="770" />
+              <mxPoint x="1190" y="420" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-47" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="882.4285714285716" y="459.9999999999998" as="sourcePoint" />
+            <mxPoint x="882.5999999999999" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-67" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-66">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="882.5999999999999" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-66" value="Push Button" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" vertex="1" parent="1">
+          <mxGeometry x="822.5" y="390" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-86" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-68" target="yJUaIPieocp2-gptNvQh-84">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="515" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-68" value="Τρένο Έρχεται&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;(κάθε Τ1 χρονικό διάστημα)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" vertex="1" parent="1">
+          <mxGeometry x="420" y="390" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-70" value="Φανάρι Αυτοκινίτων Πράσινο&lt;br&gt;Φανάρι Πεζών Κόκκινο" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a0522d;strokeColor=#6D1F00;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="590" y="300" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-71" value="Αρχή" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="620" y="170" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-83" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-72" target="yJUaIPieocp2-gptNvQh-70">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="420" y="705" as="sourcePoint" />
+            <mxPoint x="374.5" y="315" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="400" y="640" />
+              <mxPoint x="400" y="315" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-72" value="Σε περίπτωση που πέρασε το Delay T2&lt;br&gt;Άρα ΧρονικόΔιάστημα&amp;gt;Τ2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b0e3e6;strokeColor=#0e8088;" vertex="1" parent="1">
+          <mxGeometry x="580" y="595" width="149" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-81" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-75" target="yJUaIPieocp2-gptNvQh-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-82" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-75" target="yJUaIPieocp2-gptNvQh-72">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-75" value="Delay T2" style="shape=or;whiteSpace=wrap;html=1;rotation=90;align=center;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="831.25" y="570" width="97.5" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-84" value="Φανάρι Αυτοκινίτων Κόκκινο&lt;br&gt;Φανάρι Πεζών Πράσινο" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a0522d;strokeColor=#6D1F00;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="795" y="490" width="170" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="yJUaIPieocp2-gptNvQh-85" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="yJUaIPieocp2-gptNvQh-84" target="yJUaIPieocp2-gptNvQh-75">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

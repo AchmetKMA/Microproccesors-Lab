@@ -1,0 +1,199 @@
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include <stdbool.h>
+
+
+
+
+int loops =0;
+//bool active;
+volatile uint16_t adc_value;  // Variable to store ADC value
+volatile uint16_t duration; // Calculating the value of the last ADC and adc_value
+
+
+
+void Pin_init(void); //enable ADC
+void ADC0_init(int adc_value);
+void TCA0_init(int t1_value, bool pwm_enable);
+void TCA0_hardReset(void);
+
+volatile uint8_t system_active = 0; // Flag to track active system
+
+
+int main(void)
+{
+	Pin_init();
+	ADC0_init(300);  // Initialize ADC with threshold 300
+	sei(); // Enable global interrupts
+
+	while(1)
+	{
+		loops=loops+1;
+		
+	}
+}
+
+ISR(ADC0_WCOMP_vect) {
+	adc_value = ADC0.RES;  // Read ADC result
+	// Check if humidity is below the threshold
+	if (adc_value < ADC0.WINLT) {
+		PORTD.OUTSET = PIN0_bm;  // Activate LED0 on PORTD
+		} 
+		else {
+		PORTD.OUT |= PIN0_bm;  // Deactivate LED0
+	}
+	// Check if humidity is above the threshold
+	if (adc_value > ADC0.WINHT) {
+		PORTD.OUTSET = PIN1_bm;  // Activate LED1 on PORTD
+		} 
+		else {
+		PORTD.OUT |= PIN1_bm;  // Deactivate LED1 PORTD.OUTCLR  = PIN1_bm;
+	}
+	
+	sei();
+}
+
+
+ISR(PORTF_PORT_vect) {
+	// Check if SW5 is pressed to activate watering system
+	if (PORTF.IN & PIN5_bm && PORTD.OUT & PIN0_bm) {  //
+		int intflags = PORTF.INTFLAGS;
+		// Calculate duration for watering system
+		uint16_t duration = ADC0.WINLT - adc_value;
+		activate_watering_system(duration);
+		 system_active = 1; // Set system_active flag to indicate watering system is active
+		 PORTF.INTFLAGS=intflags;
+	}
+	// Check if SW6 is pressed to activate ventilation system
+	else if (PORTF.IN & PIN6_bm && PORTD.OUT & PIN1_bm){ //
+		int intflags = PORTF.INTFLAGS;
+		activate_ventilation_system();
+		 system_active = 2; // Set system_active flag to indicate ventilation system is active
+		 PORTF.INTFLAGS=intflags;
+	}
+	 else {
+		 activate_warning_leds(); //Warning the user for pressing the wrong switch
+	 }
+}
+
+void activate_watering_system(uint16_t duration) {
+	// Enable split mode
+	TCA0.SPLIT.CTRLD = TCA_SPLIT_SPLITM_bm;
+	// Activate LED0 indicating watering system is active
+	PORTD.OUTSET = PIN0_bm; // after the notification which will still stand for not having misunderstanding
+	// Start timer/counter for the calculated duration
+	TCA0.SPLIT.LPER = duration; // Set period
+	TCA0.SPLIT.CTRLA = TCA_SINGLE_ENABLE_bm | TCA_SINGLE_CLKSEL_DIV1_gc;
+	cli();
+	
+	TCA0_hardReset(); //after the watering system gets activated the system gets to the initial state
+}
+
+void activate_ventilation_system() {
+	
+ 
+ // Perform hard reset to ensure correct initial state
+ TCA0_hardReset();
+
+ TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV1024_gc | TCA_SINGLE_ENABLE_bm; // Set prescaler to 256 and enable timer
+ TCA0.SINGLE.CTRLB = TCA_SINGLE_WGMODE_SINGLESLOPE_gc; // Set waveform generation mode to single slope PWM
+
+ // Set period and compare value for the PWM
+ int t1_value = 1000; // 1ms period
+ TCA0.SINGLE.PER = t1_value;
+ TCA0.SINGLE.CMP0 = t1_value / 2;
+
+ // Enable interrupts for compare channel 0
+ TCA0.SINGLE.INTCTRL = TCA_SINGLE_CMP0_bm | TCA_SINGLE_OVF_bm;
+
+ // Initialize PORTD LED2 pin as output
+ PORTD.DIRSET |= PIN2_bm ; // (1 << PIN2_bm)
+ 
+  // Turn on LEDs on PORTD (LED1 and LED2)
+  PORTD.OUTCLR = (1 << PIN1_bm) | (1 << PIN2_bm); //
+  
+ if (PORTD.INTFLAGS & (1 << PIN2_bm) ) {  // Check for pin change interrupt on the pulse pin
+	 if (PORTD.IN & (1 << PIN2_bm)) { // Check for rising edge
+		 // Activate LED2
+		 PORTD.OUTSET |= (1 << PIN2_bm);
+		 } else {  // Falling edge
+		 // Deactivate LED2
+		 PORTD.OUTCLR |= (1 << PIN2_bm);
+	 }
+	 PORTD.INTFLAGS |= (1 << PIN2_bm);  // Clear the interrupt flag
+ }
+ // Wait for 4ms
+ _delay_ms(4);
+
+ // Stop PWM
+ TCA0.SINGLE.CTRLA &= ~TCA_SINGLE_ENABLE_bm;
+
+ // Turn off LEDs on PORTD (LED1 and LED2)
+ PORTD.OUT = ~((1 << PIN1_bm) | (1 << PIN2_bm));
+	
+
+}
+
+
+void activate_warning_leds() {
+	// Activate all LEDs to warn user of incorrect system activation
+	PORTD.OUTSET = PIN0_bm | PIN1_bm | PIN2_bm;
+	TCA0_hardReset();
+}
+
+
+
+void Pin_init(void)
+{
+	// Configure PORTF
+	PORTF.PIN5CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc; // Enable pull-up resistor and set interrupt on both edges SW5
+	PORTF.PIN6CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc ; // Enable pull-up resistor and set interrupt on both edges SW6
+	PORTD.DIR |= PIN0_bm,PIN1_bm,PIN2_bm;
+
+}
+
+void TCA0_hardReset(void)
+{
+	/* stop timer */
+	TCA0.SINGLE.CTRLA &= ~(TCA_SINGLE_ENABLE_bm);
+	
+	/* force a hard reset */
+	TCA0.SINGLE.CTRLESET = TCA_SINGLE_CMD_RESET_gc;
+}
+
+/*
+void TCA0_init(int t1_value)
+{
+	
+	// Perform hard reset to ensure correct initial state
+	TCA0_hardReset();
+
+
+	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV1024_gc | TCA_SINGLE_ENABLE_bm; // Set prescaler to 256 and enable timer
+	TCA0.SINGLE.CTRLB = TCA_SINGLE_WGMODE_SINGLESLOPE_gc; // Set waveform generation mode to single slope PWM
+    
+	TCA0.SINGLE.PER = t1_value; // Set the period
+	TCA0.SINGLE.CMP0 = t1_value / 2; // Set the compare value for compare channel to half of the period
+	
+	
+	// Enable interrupts for compare channels 0 and 1
+	TCA0.SINGLE.INTCTRL = TCA_SINGLE_CMP0_bm | TCA_SINGLE_OVF_bm;
+
+}*/
+
+
+
+void ADC0_init(int adc_value) 
+{
+	// Initialize the ADC for Free-Running mode
+	ADC0.CTRLA |= ADC_RESSEL_10BIT_gc; // 10-bit resolution
+	ADC0.CTRLA |= ADC_ENABLE_bm; // Enable ADC
+	ADC0.MUXPOS |= ADC_MUXPOS_AIN7_gc; // Select AIN7 as positive input cause of the input that will be used (the adc_value is positive as "volatile uint16_t adc_value;")
+	ADC0.DBGCTRL |= ADC_DBGRUN_bm; // Enable Debug Mode
+	ADC0.WINLT |= adc_value; // Set threshold
+	ADC0.INTCTRL |= ADC_WCMP_bm; // Enable Interrupts for WCM
+	ADC0.CTRLE |= ADC_WINCM_OUTSIDE_gc; // Interrupt when RESULT < WINLT or RESULT >WINHT
+	ADC0.CTRLA |= ADC_FREERUN_bm; // Enable Free-Running mode
+	ADC0.COMMAND |= ADC_STCONV_bm; // Start Conversion
+}

@@ -1,0 +1,213 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+
+// Define time intervals in seconds
+#define T1 20
+#define T2 30
+#define T3 5
+
+//#define PED_BUTTON_PIN      PINF
+//#define PED_BUTTON_BIT      5
+
+// Flag to track the button press status
+volatile uint8_t pedestrianButtonPressed = 0;
+
+// Convert seconds to milliseconds (assuming 1 ms time unit)
+#define T1_count_value (T1 * 1000)
+#define T2_count_value (T2 * 1000)
+#define T3_count_value (T3 * 1000)
+
+
+// Initialize TCA0 in split mode
+void initTCA0() {
+	
+	
+	TCA0.SPLIT = TCA_SPLIT_SPLITM_bm; // Enable split mode
+	TCA0.SPLIT.CTRLA |= TCA_SPLIT_ENABLE_bm; // Enable TCA0
+	TCA0.SPLIT.HCMP0 = 0; //clear counter
+	TCA0.SPLIT.LCMP0 = 0; //clear counter
+	
+	
+	TCA0.SPLIT.HCMP0 = T1_count_value;      // Set Counter A value for T1 delay
+	TCA0.SPLIT.LCMP0 = T2_count_value;      // Set Counter B value for T2 delay
+	
+	TCA0.SPLIT.INTCTRL |= TCA0.SPLIT.HCMP0 | TCA0.SPLIT.LCMP0; // Enable interrupts for HCMP0 and LCMP0
+}
+
+// Delay function for T3 delay
+void delay_T3() {
+	TCA0.CMP0 = T3_count_value; // Set TCA.CMP0 for T3 delay
+	while (!(TCA0.SPLIT.INTFLAGS & TCA0.SPLIT.LCMP0)); // Wait for T3 delay
+}
+
+
+int main(void) {
+	// Initialize TCA0
+	initTCA0();
+	
+	
+    PORTD.DIR |= 0b00000111; //PIN is output
+    PORTD.OUT= 0b00000100; //LED 2 ON for cars (Regular Mode)
+	
+    PORTF.PIN5CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc; //pedestrian press button
+
+	// Enable global interrupts
+	sei();
+	
+	
+		//if (!(PORTF.IN & PIN5_bm)) {
+		//	if (!pedestrianButtonPressed) {
+			//	pedestrianButtonPressed = 1;
+				// Code for preventing immediate pedestrian button press (T3 delay)
+				//delay_T3();
+				// Handle pedestrian button press
+			//}
+	//	}
+		
+		//else {
+		//	pedestrianButtonPressed = 0;
+	//	}
+
+	while (1) {
+
+        if (pedestrianButtonPressed) {
+	        // Code for preventing immediate pedestrian button press (T3 delay)
+		
+		
+		    PORTD.OUTCLR= 0b00000010;
+			delay_T3();
+		
+
+	        // Handle pedestrian button press
+	       // PORTD.OUTCLR= 0b00000010; //on
+
+	        // Reset the flag
+	        pedestrianButtonPressed = 0;
+        }
+
+
+
+
+
+		
+		//if (!(PED_BUTTON_PIN & (1 << PED_BUTTON_BIT)) && !pedestrianButtonPressed) {
+			// Code for preventing immediate pedestrian button press (T3 delay)
+			// ...
+
+			// Reconfigure TCA.CMP0 for the next T3 delay
+			//TCA0.SPLIT.LCMP0 = T3_count_value;
+		}
+
+		// Additional code...
+	}
+
+	return 0;
+}
+
+
+
+// Interrupt Service Routine for T1 delay (Tram passage)
+ISR(TCA0_CMP0_vect) {
+	// Code for T1 delay (Tram passage)
+	// ...
+}
+
+// Interrupt Service Routine for T2 delay (Traffic light)
+ISR(TCA0_CMP1_vect) {
+	// Code for T2 delay (Traffic light)
+	// ...
+	// Reconfigure TCA.CMP0 for T3 delay
+	TCA0.CMP0 = T3_count_value;
+}
+
+
+ISR(PORTF_PORT_vect) {
+	int y = PORTF.INTFLAGS; // Procedure to clear the interrupt flag
+	PORTF.INTFLAGS = y;
+
+	if (!(PORTF.IN & PIN5_bm)) {
+		pedestrianButtonPressed = 1;
+	}
+}
+
+
+/*
+
+// Interrupt Service Routine for PORTF (Pedestrian button)
+ISR(PORTF_PORT_vect) {
+	// Check if the button was pressed
+	if (!(PORTF.IN & PIN5_bm)) {
+		if (!pedestrianButtonPressed) {
+			pedestrianButtonPressed = 1;
+			// Code for preventing immediate pedestrian button press (T3 delay)
+			delay_T3();
+			// Handle pedestrian button press
+		}
+		} 
+		
+		else {
+		pedestrianButtonPressed = 0;
+	}
+}
+
+
+*/
+
+//ISR(TCA0_CMP0_vect) {
+	// Clear the flag to allow the button press again
+//	pedestrianButtonPressed = 0;
+//}
+
+
+
+
+
+/*
+
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#define value 20
+int x=0; //logic flag
+int main() {
+	PORTD.DIR |= 0b00000010; //PIN is output
+	PORTD.OUTCLR= 0b00000010;//LED is on
+	//(σελ 219, 224, 205) 16-bit counter high and low
+	TCA0.SPLIT.HCNT = 0; //clear counter
+	TCA0.SPLIT.LCNT = 0;
+	
+	TCA0.SPLIT.CTRLB; = 0; //Normal Mode (TCA_SINGLE_WGMODE_NORMAL_gc σελ 207)
+	
+	
+	
+	TCA0.SPLIT.HCMP0 = T1_count_value;//When CMP0 reaches this value -> interrupt
+	//CLOCK_FREQUENCY/1024
+	TCA0.SPLIT.LCMP0=T2_count_value;
+	
+	
+	TCA0.SPLIT.CTRLA = 0x7<<1; //TCA_SINGLE_CLKSEL_DIV1024_gc σελ 224
+	TCA0.SPLIT.CTRLA |= 1; //Enable
+	
+	TCA0.SPLIT.INTCTRL = TCA_SINGLE_CMP0_bm; //Interrupt Enable (=0x10)
+	TCA0.SPLIT.INTCTRL = TCA_SINGLE_CMP0_bm; //The other interrupt
+	
+	
+	sei(); //begin accepting interrupt signals
+	while (x==0) {
+		; //similar to a nop function
+	}
+	PORTD.OUT |= PIN1_bm; //LED is off
+	cli();
+}
+ISR(TCA0_CMP0_vect){
+	TCA0.SINGLE.CTRLA = 0; //Disable
+	int intflags = TCA0.SINGLE.INTFLAGS; //Procedure to
+	TCA0.SINGLE.INTFLAGS=intflags; //clear interrupt flag
+	x=1; //change flag to get out of the loop
+}*/
+
+
+
+
+
+
