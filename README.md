@@ -172,7 +172,7 @@ Through these exercises, the project demonstrates practical work with:
 **Course:** Advanced Microprocessors Laboratory  
 **Department:** Computer Engineering and Informatics  
 **Institution:** University of Patras  
-**Academic years covered:** 2022–2023 and 2023–2024  
+**Academic year covered:** 2023–2024  
 **Laboratory group:** B4
 
 ---
