@@ -1,4 +1,4 @@
-# Advanced Microprocessors – Embedded Systems Laboratory Projects
+# Advanced Microprocessors Laboratory Projects
 
 A collection of four AVR-based embedded-systems exercises developed for the **Advanced Microprocessors Laboratory** at the Department of Computer Engineering and Informatics, University of Patras (academic years 2022–2024).
 
